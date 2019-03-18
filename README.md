@@ -6,10 +6,6 @@ Download requirements.txt & website_checker.py script and store them in a folder
 
   `pip install -r requirements.txt`
 
-If you get any error try running the below command:
-
-  `python -m pip install -r requirements.txt`
-
 
 ## Input: 
 (1) URL, e.g. https://www.shoutmeloud.com/
