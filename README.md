@@ -2,7 +2,7 @@
 
   `python website_checker <URL_to_check>`
 
-Download requirements.txt & website_checker.py script and store them in a folder. Run the following command from within that folder:
+Download requirements.txt & website_checker.py script and store them in a folder. Recommended is to use a `virtualenv` in that folder and run the following command:
 
   `pip install -r requirements.txt`
 
