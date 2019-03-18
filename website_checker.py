@@ -260,6 +260,7 @@ for element in r.html.find("style"):
 
 ### Optimized Image Check ###
 images = []
+images_missing_info = 0
 image_count = 0
 for element in r.html.find("img"):
     image_url = element.attrs.get("src")
@@ -278,7 +279,11 @@ for element in r.html.find("img"):
     try:
         image_size = int(i.raw.info().get("Content-Length"))/1000
     except:
-        print("Error fetching image size for:", image_url)
+        images_missing_info = 1
+        images.append({
+               'url': image_url,
+               'size(KB)': "Error fetching image size. No Content-Length in header."
+               })
 
     if image_size is not None and image_size >=350:
         images.append({
@@ -313,8 +318,12 @@ if images:
     dx = pd.DataFrame(columns=['url', 'size(KB)'])
     dx = dx.append(images, ignore_index=False, sort=False)
     dx.to_csv("images.csv", index=False)
+    if images_missing_info == 1:
+        print("  (Note that some images lack content-length info in header)")
 else:
     print("Unoptimized Images:","Not Found")
+    if images_missing_info == 1:
+        print("  (Note that some images lack content-length info in header)")
 if data:
     df = pd.DataFrame(columns=['name', 'size', 'compressed'])
     df = df.append(data, ignore_index=False, sort=False)

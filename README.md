@@ -18,7 +18,7 @@ python website_checker <URL_to_check>
 (9) Total CSS Compressed Size, in KB<br />
 (10) Website is using webcomponent (Yes/No)<br />
 (11) Standard Deviation of TTFB<br />
-(12) Number of detected unoptimized images (Image size <= 350KB)<br />
+(12) Number of detected unoptimized images (Image size >= 350KB)<br />
 
 Creates three files: cdns.csv, css_js.csv, and images.csv with additional info
 
