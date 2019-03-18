@@ -19,7 +19,8 @@ import scipy.stats
 try:
     import pycurl
 except ImportError:
-    print("Couldn't Find Pycurl")
+    print("Couldn't find pycurl")
+    exit()
 
 
 
