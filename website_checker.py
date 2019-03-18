@@ -56,7 +56,8 @@ def cdn_finder(url):
     except Exception as e:
         print(e)
     wait_seconds = 60
-    print("\nLooking up CDNs of:", url, "Pleaste wait", wait_seconds, "seconds...")
+    print("\nLooking up CDNs of:", url)
+    print("  Pleaste wait", wait_seconds, "seconds...")
     time.sleep(wait_seconds)
     cdns = []
     # print(r.html.raw_html)
@@ -65,9 +66,9 @@ def cdn_finder(url):
         tds = {}
         try:
             tds['Count'], tds['Domain'], tds['Provider'] = [td.text for td in s.find_all('td')]
-            print("  Count:",  tds['Count'], "CDN:", tds['Domain'],"Provider:", tds['Provider'])    
+            print("   Count:",  tds['Count'], "CDN:", tds['Domain'],"Provider:", tds['Provider'])    
         except Exception as e:
-            print("  ", e)
+            print("   ", e)
         if tds:
             cdns.append(tds)
     return cdns
@@ -128,7 +129,7 @@ try:
     print("\nTTFB checks in progress...")
     ttfb = []
     for i in range(1, number_of_attempts):
-        print("  attempt {}: ".format(i), end="")
+        print("   Attempt {}: ".format(i), end="")
         c = pycurl.Curl()
         c.setopt(pycurl.URL, r.url)  # set url
         b = io.BytesIO()
@@ -305,10 +306,10 @@ if html_length != html_length_with_js:
 else:
     print("3. Website uses JS to render: No")
 if r.history:
-    print("  Redirected:", r.history[-1].is_redirect)
-    print("  Redirect status code:", r.history[-1].status_code)
-    print("  Redirected from:", r.history[-1].url)
-    print("  Redirected to:", r.url)
+    print("   Redirected:", r.history[-1].is_redirect)
+    print("   Redirect status code:", r.history[-1].status_code)
+    print("   Redirected from:", r.history[-1].url)
+    print("   Redirected to:", r.url)
 
 print("4. Detected compression format:", headers)
 print("5. Supports HTTP/2.0:", http_version(url))
@@ -318,11 +319,16 @@ print("8. Total CSS size: ", total_css/1000, "KB")
 print("9. Total CSS compressed size: ", total_css_compressed/1000, "KB")
 print("10. Website is using webcomponent: ", "Yes ({})".format(len(web_components)) if web_components else "No")
 
+css_file = "css_js.csv"
+cdn_file = "cdns.csv"
+image_file = "images.csv"
+
+
 if images:
     print("11. Number of detected unoptimized images:",len(images),"of", image_count,"(Image size >= 350KB)")
     dx = pd.DataFrame(columns=['url', 'size(KB)'])
     dx = dx.append(images, ignore_index=False, sort=False)
-    dx.to_csv("images.csv", index=False)
+    dx.to_csv(image_file, index=False)
     if images_missing_info == 1:
         print("  (Note that some images lack content-length info in header)")
 else:
@@ -333,15 +339,22 @@ else:
 
 
 #Write to file
-print("\nWriting output data to files...")
+print("\nWriting output data to files:")
+if images:
+    print("  ",image_file)
+if data:
+    print("  ",css_file)
+if cdns:
+    print("  ",cdn_file)
+
 if data:
     df = pd.DataFrame(columns=['name', 'size', 'compressed'])
     df = df.append(data, ignore_index=False, sort=False)
-    df.to_csv('css_js.csv', index=False)
+    df.to_csv(css_file, index=False)
 if cdns:
     cdn_df = pd.DataFrame(columns=['Count', 'Domain', 'Provider'])
     cdn_df = cdn_df.append(cdns, ignore_index=True)
-    cdn_df.to_csv("cdns.csv", index=False)
+    cdn_df.to_csv(cdn_file, index=False)
 
 print("\nScript finished")
 
