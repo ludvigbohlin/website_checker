@@ -11,6 +11,7 @@ lxml==4.3.1
 numpy==1.16.1
 pandas==0.24.1
 parse==1.11.1
+pycurl==7.43
 pyee==5.0.0
 pyppeteer==0.0.25
 pyquery==1.4.0
