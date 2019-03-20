@@ -94,17 +94,13 @@ def http_version(url):
     return value;
     }
     """%url
-    result = r.html.render(script=script)
+    try:
+        result = r.html.render(script=script)
+    except:
+        results = "No HTTP2 found"
     # print(result)
-    return True if "alert-success" in result else False
+    return True if "alert-success" in result else "N/A" if "No HTTP2 found" in result else False
 
-
-
-cdns = []
-try:
-    cdns = cdn_finder(url) 
-except Exception as e:
-    print("Error Occurred: Couldn't Fetch CDN", e)
 
 data = []
 session = requests_html.HTMLSession()
@@ -112,6 +108,18 @@ try:
     r = session.get(url)
 except Exception as e:
     print("Error:", e)
+
+if r.history:
+    print("   Redirected:", r.history[-1].is_redirect)
+    print("   Redirect status code:", r.history[-1].status_code)
+    print("   Redirected from:", r.history[-1].url)
+    print("   Redirected to:", r.url)
+
+cdns = []
+try:
+    cdns = cdn_finder(url) 
+except Exception as e:
+    print("Error Occurred: Couldn't Fetch CDN", e)
 
 html_length = len(r.html.full_text.strip())
 
@@ -300,18 +308,14 @@ for element in r.html.find("img"):
 
 ttfb_interval_array = mean_confidence_interval(ttfb_time, std_dev, number_of_attempts)
 
-print("1. TTFB, mean: %.2f ms, CI: [%.2fms, %.2fms]"%(ttfb_time,ttfb_interval_array[0],ttfb_interval_array[1]))
+print("\nResults:")
+print("1. TTFB, mean: %.2f ms"%ttfb_time)
+print("1. TTFB, confidence interval: [%.2fms, %.2fms]"%(ttfb_interval_array[0],ttfb_interval_array[1]))
 print("2. Do the site use a CDN?", "Yes (stored the list in cdns.csv)" if cdns else "No" )
 if html_length != html_length_with_js:
     print("3. Website uses JS to render: Yes")
 else:
     print("3. Website uses JS to render: No")
-if r.history:
-    print("   Redirected:", r.history[-1].is_redirect)
-    print("   Redirect status code:", r.history[-1].status_code)
-    print("   Redirected from:", r.history[-1].url)
-    print("   Redirected to:", r.url)
-
 print("4. Detected compression format:", headers)
 print("5. Supports HTTP/2.0:", http_version(url))
 print("6. Total JS size: ", total/1000, "KB")
