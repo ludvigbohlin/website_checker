@@ -82,6 +82,7 @@ def http_version(url):
     url = url.replace("https://", "").replace("http://", "")
     x = requests_html.HTMLSession()
     r = x.get("https://tools.keycdn.com/http2-test")
+    result = ""
     script = """
         () => {
         var  value = ""
